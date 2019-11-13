@@ -14,9 +14,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Mahmoud\\Desktop\\Projects\\SiteMapGenerator\\SiteMapGenerator.csproj",
-      "projectName": "SiteMapGenerator",
-      "projectPath": "C:\\Users\\Mahmoud\\Desktop\\Projects\\SiteMapGenerator\\SiteMapGenerator.csproj",
+      "projectUniqueName": "C:\\Users\\Mahmoud\\Desktop\\Projects\\SiteMapGenerator\\DotNetSiteMapGenerator.csproj",
+      "projectName": "DotNetSiteMapGenerator",
+      "projectPath": "C:\\Users\\Mahmoud\\Desktop\\Projects\\SiteMapGenerator\\DotNetSiteMapGenerator.csproj",
       "packagesPath": "C:\\Users\\Mahmoud\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\Mahmoud\\Desktop\\Projects\\SiteMapGenerator\\obj\\",
       "projectStyle": "PackageReference",

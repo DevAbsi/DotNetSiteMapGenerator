@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SiteMapGenerator
+namespace DotNetSiteMapGenerator
 {
     public class SitemapIndex
     {
