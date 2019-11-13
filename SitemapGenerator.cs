@@ -19,6 +19,7 @@ namespace SiteMapGenerator
         private const string signature = "Generated using Sitemap Generator *** http://github.com/DevAbsi/ ";
 
         private string baseFilename = "sitemap";
+        private int maximumThreads = 5;
         private int maximumAllowedEntries = 50000;
 
         private event EventHandler<AddUrlEventArgs> UrlAdded;
@@ -144,21 +145,24 @@ namespace SiteMapGenerator
                 document.AppendChild(comment);
                 var root = document.CreateElement("urlset");
                 document.AppendChild(root);
-
-                foreach (var urlEntry in sitemapFile.Entires)
+                ParallelOptions options = new ParallelOptions()
                 {
-                    XmlElement urlTag = document.CreateElement("url");
-                    var loc = document.CreateElement("loc");
-                    loc.InnerText = urlEntry.URL;
-                    var lastmod = document.CreateElement("lastmod");
-                    lastmod.InnerText = urlEntry.LastModification.ToString();
-                    var changeFrequency = document.CreateElement("changefreq");
-                    changeFrequency.InnerText = Enum.GetName(typeof(ChangeFrequency), urlEntry.ChangeFrequency).ToString();
-                    urlTag.AppendChild(loc);
-                    urlTag.AppendChild(lastmod);
-                    urlTag.AppendChild(changeFrequency);
-                    root.AppendChild(urlTag);
-                }
+                    MaxDegreeOfParallelism = maximumThreads
+                };
+                Parallel.ForEach(sitemapFile.Entires, options, urlEntry =>
+                 {
+                     XmlElement urlTag = document.CreateElement("url");
+                     var loc = document.CreateElement("loc");
+                     loc.InnerText = urlEntry.URL;
+                     var lastmod = document.CreateElement("lastmod");
+                     lastmod.InnerText = urlEntry.LastModification.ToString();
+                     var changeFrequency = document.CreateElement("changefreq");
+                     changeFrequency.InnerText = Enum.GetName(typeof(ChangeFrequency), urlEntry.ChangeFrequency).ToString();
+                     urlTag.AppendChild(loc);
+                     urlTag.AppendChild(lastmod);
+                     urlTag.AppendChild(changeFrequency);
+                     root.AppendChild(urlTag);
+                 });
 
                 document.Save(sitemapFile.Filename);
             }
