@@ -1,0 +1,8 @@
+C:\Users\Mahmoud\Desktop\Projects\SiteMapGenerator\bin\Debug\netcoreapp3.0\SiteMapGenerator.deps.json
+C:\Users\Mahmoud\Desktop\Projects\SiteMapGenerator\bin\Debug\netcoreapp3.0\SiteMapGenerator.dll
+C:\Users\Mahmoud\Desktop\Projects\SiteMapGenerator\bin\Debug\netcoreapp3.0\SiteMapGenerator.pdb
+C:\Users\Mahmoud\Desktop\Projects\SiteMapGenerator\obj\Debug\netcoreapp3.0\SiteMapGenerator.csprojAssemblyReference.cache
+C:\Users\Mahmoud\Desktop\Projects\SiteMapGenerator\obj\Debug\netcoreapp3.0\SiteMapGenerator.AssemblyInfoInputs.cache
+C:\Users\Mahmoud\Desktop\Projects\SiteMapGenerator\obj\Debug\netcoreapp3.0\SiteMapGenerator.AssemblyInfo.cs
+C:\Users\Mahmoud\Desktop\Projects\SiteMapGenerator\obj\Debug\netcoreapp3.0\SiteMapGenerator.dll
+C:\Users\Mahmoud\Desktop\Projects\SiteMapGenerator\obj\Debug\netcoreapp3.0\SiteMapGenerator.pdb

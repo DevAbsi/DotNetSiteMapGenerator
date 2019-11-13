@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29424.173
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SiteMapGenerator", "SiteMapGenerator.csproj", "{CB2ECEA0-F163-4F12-B533-0A7756C8318A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Example", "..\ConsoleApp2\Example.csproj", "{1F91D462-40B4-4DB0-A8A4-488F5141190C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CB2ECEA0-F163-4F12-B533-0A7756C8318A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CB2ECEA0-F163-4F12-B533-0A7756C8318A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CB2ECEA0-F163-4F12-B533-0A7756C8318A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CB2ECEA0-F163-4F12-B533-0A7756C8318A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F91D462-40B4-4DB0-A8A4-488F5141190C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F91D462-40B4-4DB0-A8A4-488F5141190C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F91D462-40B4-4DB0-A8A4-488F5141190C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F91D462-40B4-4DB0-A8A4-488F5141190C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D89E14A6-E24D-4593-A58B-3BB958673233}
+	EndGlobalSection
+EndGlobal
