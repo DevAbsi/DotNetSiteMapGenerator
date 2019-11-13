@@ -7,7 +7,7 @@ namespace DotNetSiteMapGenerator
 {
     public interface ISitemapGenerator
     {
-        public void AddUrlEntry(UrlEntry urlEntry);
+        public void AddUrlEntry(string url, string category, ChangeFrequency changeFrequency, DateTime lastModification);
 
         public void RemoveUrl(string url);
 

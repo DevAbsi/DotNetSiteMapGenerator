@@ -16,7 +16,7 @@ namespace DotNetSiteMapGenerator
     {
         private List<UrlEntry> entriesPool = new List<UrlEntry>();
         private List<SitemapFile> sitemapsFiles = new List<SitemapFile>();
-        private const string signature = "Generated using Sitemap Generator *** http://github.com/DevAbsi/ ";
+        private const string signature = "Generated using DotNetSitemapGenerator *** http://github.com/DevAbsi/ ";
 
         private string baseFilename = "sitemap";
         private int maximumThreads = 2;
@@ -88,8 +88,15 @@ namespace DotNetSiteMapGenerator
             sitemapsFiles.Add(sitemapFile);
         }
 
-        public void AddUrlEntry(UrlEntry urlEntry)
+        public void AddUrlEntry(string url, string category, ChangeFrequency changeFrequency, DateTime lastModification)
         {
+            UrlEntry urlEntry = new UrlEntry
+            {
+                Category = category,
+                ChangeFrequency = changeFrequency,
+                LastModification = lastModification,
+                URL = url
+            };
             // check if the url is already exists in any of the sitemaps
             foreach (var sitemapfile in sitemapsFiles)
                 if (sitemapfile.Entires.Any(w => w.URL == urlEntry.URL))
@@ -192,6 +199,7 @@ namespace DotNetSiteMapGenerator
         public void RemoveUrl(string url)
         {
             //TODO
+            throw new NotImplementedException();
         }
     }
 }

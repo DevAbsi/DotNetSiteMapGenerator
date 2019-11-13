@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DotNetSiteMapGenerator
 {
-    public class SitemapFile
+    internal class SitemapFile
     {
         public string Filename { get; set; }
         public string Category { get; set; }

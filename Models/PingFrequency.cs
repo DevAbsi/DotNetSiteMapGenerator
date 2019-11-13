@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DotNetSiteMapGenerator
 {
-    public enum PingFrequency
+    internal enum PingFrequency
     {
         Immediat,
         Daily,

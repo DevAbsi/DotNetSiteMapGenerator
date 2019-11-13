@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DotNetSiteMapGenerator
 {
-    public class UrlEntry
+    internal class UrlEntry
     {
         public string URL { get; set; }
         public string Category { get; set; }
