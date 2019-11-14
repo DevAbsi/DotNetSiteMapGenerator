@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -10,17 +11,20 @@ namespace DotNetSiteMapGenerator
 {
     /// <summary>
     /// sitemap file name structure :
-    ///  sitemap_category?_number?_02-5-2019_13-52-14.xml
+    ///  sitemap_category_number_dd-mm-yyyy_hh-mm-ss.xml
     /// </summary>
     public class SitemapGenerator : ISitemapGenerator
     {
         private List<UrlEntry> entriesPool = new List<UrlEntry>();
         private List<SitemapFile> sitemapsFiles = new List<SitemapFile>();
         private const string signature = "Generated using DotNetSitemapGenerator *** http://github.com/DevAbsi/ ";
+        private const string googlePingUrl = "";
 
         private string baseFilename = "sitemap";
         private int maximumThreads = 2;
         private int maximumAllowedEntries = 50000;
+
+        private string workingDirectory;
 
         public SitemapGenerator()
         {
@@ -46,13 +50,16 @@ namespace DotNetSiteMapGenerator
 
         public SitemapGenerator Build()
         {
+            workingDirectory = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\Sitemaps");
+            if (!Directory.Exists(workingDirectory))
+                Directory.CreateDirectory(workingDirectory);
             LoadCreatedSitemaps();
             return this;
         }
 
         private void LoadCreatedSitemaps()
         {
-            var files = Directory.GetFiles(Environment.CurrentDirectory, "*.xml");
+            var files = Directory.GetFiles(workingDirectory, "*.xml");
 
             foreach (var file in files)
                 LoadUrlsFromFile(file);
@@ -147,6 +154,7 @@ namespace DotNetSiteMapGenerator
         public async Task Save()
         {
             // TODO create a new sitemap index that will containes all the sitemaps generated
+
             await Task.Run(() =>
              {
                  foreach (var sitemapFile in sitemapsFiles.Where(w => w.NeedReWrite == true))
@@ -179,7 +187,7 @@ namespace DotNetSiteMapGenerator
 
                      sitemapFile.NeedReWrite = false;
 
-                     document.Save(sitemapFile.Filename);
+                     document.Save(Path.Combine(workingDirectory, sitemapFile.Filename));
                  }
              });
         }
@@ -192,10 +200,23 @@ namespace DotNetSiteMapGenerator
                                FilenameSeparators.BlockSeparator + DateTime.Now.ToString(dateTimeFormat) + ".xml";
         }
 
+        /// <summary>
+        /// submit sitemap Index to search engines
+        /// </summary>
+        /// <param name="searchengines"></param>
+        /// <returns></returns>
         public async Task PingSearchEngines(params SearchEngines[] searchengines)
         {
-            // TODO
-            throw new NotImplementedException();
+            foreach (var searchEngine in searchengines)
+            {
+                HttpClient client = new HttpClient();
+                switch (searchEngine)
+                {
+                    case SearchEngines.Google:
+                        await client.GetAsync(googlePingUrl.Trim() + "sitemap.index");
+                        break;
+                }
+            }
         }
 
         public void RemoveUrl(string url)
