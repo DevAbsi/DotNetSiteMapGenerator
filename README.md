@@ -31,7 +31,7 @@ public class HomeController : Controller
         public IActionResult Index()
         {
             sitemapGenerator.AddUrlEntry(
-                "http://domain.com/ " + i,
+                "http://domain.com/ ",
                 "Blog",
                 ChangeFrequency.Hourly,
                 DateTime.Now);
