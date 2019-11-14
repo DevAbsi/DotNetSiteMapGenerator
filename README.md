@@ -28,14 +28,14 @@ public class HomeController : Controller
             this.sitemapGenerator = sitemapGenerator;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             sitemapGenerator.AddUrlEntry(
                 "http://domain.com/ ",
                 "Blog",
                 ChangeFrequency.Hourly,
                 DateTime.Now);
-            sitemapGenerator.Save();
+            await sitemapGenerator.Save();
             return View();
         }
     }
