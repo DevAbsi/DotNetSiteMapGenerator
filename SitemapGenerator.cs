@@ -177,6 +177,8 @@ namespace DotNetSiteMapGenerator
                          root.AppendChild(urlTag);
                      });
 
+                     sitemapFile.NeedReWrite = false;
+
                      document.Save(sitemapFile.Filename);
                  }
              });
@@ -198,8 +200,16 @@ namespace DotNetSiteMapGenerator
 
         public void RemoveUrl(string url)
         {
-            //TODO
-            throw new NotImplementedException();
+            foreach (var sitemapFile in sitemapsFiles)
+            {
+                var urlEntry = sitemapFile.Entires.FirstOrDefault(w => w.URL == url);
+                if (urlEntry != null)
+                {
+                    sitemapFile.Entires.Remove(urlEntry);
+                    sitemapFile.NeedReWrite = true;
+                    break;
+                }
+            }
         }
     }
 }

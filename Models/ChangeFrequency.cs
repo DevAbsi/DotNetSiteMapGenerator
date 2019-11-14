@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DotNetSiteMapGenerator
 {
-    internal enum ChangeFrequency
+    public enum ChangeFrequency
     {
         Always,
         Hourly,
