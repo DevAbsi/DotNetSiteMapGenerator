@@ -23,7 +23,6 @@ namespace DotNetSiteMapGenerator
         private string sitemapIndexFilename = "sitemap-index";
         private int maximumThreads = 2;
         private int maximumAllowedEntries = 50000;
-
         private string subdirectory = "Sitemaps";
         private string workingPath;
 
@@ -129,7 +128,7 @@ namespace DotNetSiteMapGenerator
                 Category = category,
                 ChangeFrequency = changeFrequency,
                 LastModification = lastModification,
-                URL = Path.Combine(this.domain, RelativeUrl)
+                URL = new Uri(new Uri(this.domain), RelativeUrl).ToString()
             };
             // check if the url is already exists in any of the sitemaps
             foreach (var sitemapfile in sitemapsFiles)
@@ -194,7 +193,12 @@ namespace DotNetSiteMapGenerator
                         var sitemapTag = document.CreateElement("sitemap");
                         var locTag = document.CreateElement("loc");
                         var lastModificationTag = document.CreateElement("lastmod");
-                        locTag.InnerText = Path.Combine(domain, subdirectory, sitemapfile.Filename);
+
+                        // join url paths
+                        Uri uri = new Uri(new Uri(domain), subdirectory);
+                        uri = new Uri(uri, sitemapfile.Filename);
+                        locTag.InnerText = uri.ToString();
+
                         // for last modification date, have to find the latest urlEntry that need to be written
                         DateTime latest = sitemapfile.Entires.Where(w => w.Written == false)
                             .OrderByDescending(w => w.LastModification)
