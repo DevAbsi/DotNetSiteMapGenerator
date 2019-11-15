@@ -43,42 +43,77 @@ namespace DotNetSiteMapGenerator
             Build();
         }
 
+        /// <summary>
+        /// The sitemap filename
+        /// </summary>
+        /// <param name="filename">by default = "sitemap"</param>
+        /// <returns></returns>
         public SitemapGenerator WithFilename(string filename)
         {
             this.baseFilename = filename;
             return this;
         }
 
+        /// <summary>
+        /// Sitemap index filename
+        /// </summary>
+        /// <param name="sitemapIndexFileName">by default = "sitemap-index"</param>
+        /// <returns></returns>
         public SitemapGenerator WithSitemapIndex(string sitemapIndexFileName)
         {
             this.sitemapIndexFilename = sitemapIndexFileName;
             return this;
         }
 
+        /// <summary>
+        /// The maximum entries for each sitemap file
+        /// </summary>
+        /// <param name="maximumEntries">by default = 50000 as per Google policy</param>
+        /// <returns></returns>
         public SitemapGenerator WithMaximumAllowedEntries(int maximumEntries)
         {
             this.maximumAllowedEntries = maximumEntries;
             return this;
         }
 
+        /// <summary>
+        /// The maximul threads that will be used to writes entries to  sitemaps
+        /// </summary>
+        /// <param name="maxthreads"> by default = 2</param>
+        /// <returns></returns>
         public SitemapGenerator WithMaximumThreads(int maxthreads)
         {
             this.maximumAllowedEntries = maximumThreads;
             return this;
         }
 
+        /// <summary>
+        /// sitemaps subdirecory
+        /// </summary>
+        /// <param name="subDirectory">by default all sitesmaps files will be written in sitemaps sub-directory</param>
+        /// <returns></returns>
         public SitemapGenerator WithOutputSubDirectory(string subDirectory)
         {
             this.subdirectory = subDirectory;
             return this;
         }
 
-        public SitemapGenerator WithDomainName(string domainnameUrl)
+        /// <summary>
+        /// Site home url
+        /// </summary>
+        /// <param name="baseUrl"> will be used to append relative urls to sitemaps to automatically convert them to full path</param>
+        /// <returns></returns>
+        public SitemapGenerator WithDomainName(string baseUrl)
         {
-            this.domain = domainnameUrl;
+            this.domain = baseUrl;
             return this;
         }
 
+        /// <summary>
+        /// Auto-ping search engines about the path of the site sitemaps path, will be automatically triggered after calling the Save method
+        /// </summary>
+        /// <param name="autoPingEngines"></param>
+        /// <returns></returns>
         public SitemapGenerator WithAutoPing(params SearchEngines[] autoPingEngines)
         {
             this.autoPingEngines = autoPingEngines;
