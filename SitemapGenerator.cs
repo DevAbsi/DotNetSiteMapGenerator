@@ -122,14 +122,14 @@ namespace DotNetSiteMapGenerator
             sitemapsFiles.Add(sitemapFile);
         }
 
-        public void AddUrlEntry(string url, string category, ChangeFrequency changeFrequency, DateTime lastModification)
+        public void AddUrlEntry(string RelativeUrl, string category, ChangeFrequency changeFrequency, DateTime lastModification)
         {
             UrlEntry urlEntry = new UrlEntry
             {
                 Category = category,
                 ChangeFrequency = changeFrequency,
                 LastModification = lastModification,
-                URL = url
+                URL = Path.Combine(this.domain, RelativeUrl)
             };
             // check if the url is already exists in any of the sitemaps
             foreach (var sitemapfile in sitemapsFiles)
