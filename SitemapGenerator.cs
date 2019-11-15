@@ -20,7 +20,7 @@ namespace DotNetSiteMapGenerator
         private const string googlePingUrl = "https://www.google.com/webmasters/tools/ping?sitemap=";
         private const string bingPingUrl = "https://www.bing.com/ping?sitemap=";
         private const string yandexPingUrl = "http://webmaster.yandex.com/site/map.xml?host=";
-        private string domain = string.Empty;
+        private string baseUrl = string.Empty;
         private string baseFilename = "sitemap";
         private string sitemapIndexFilename = "sitemap-index";
         private int maximumThreads = 2;
@@ -35,6 +35,7 @@ namespace DotNetSiteMapGenerator
         /// <param name="baseUrl">Home Url</param>
         public SitemapGenerator(string baseUrl)
         {
+            this.baseUrl = baseUrl;
             Build();
         }
 
@@ -105,7 +106,7 @@ namespace DotNetSiteMapGenerator
         /// <returns></returns>
         public SitemapGenerator WithDomainName(string baseUrl)
         {
-            this.domain = baseUrl;
+            this.baseUrl = baseUrl;
             return this;
         }
 
@@ -176,7 +177,7 @@ namespace DotNetSiteMapGenerator
                 Category = category,
                 ChangeFrequency = changeFrequency,
                 LastModification = lastModification,
-                URL = new Uri(new Uri(this.domain), RelativeUrl).ToString()
+                URL = new Uri(new Uri(this.baseUrl), RelativeUrl).ToString()
             };
             // check if the url is already exists in any of the sitemaps
             foreach (var sitemapfile in sitemapsFiles)
@@ -243,9 +244,11 @@ namespace DotNetSiteMapGenerator
                         var lastModificationTag = document.CreateElement("lastmod");
 
                         // join url paths
-                        Uri uri = new Uri(new Uri(domain), subdirectory);
-                        uri = new Uri(uri, sitemapfile.Filename);
-                        locTag.InnerText = uri.ToString();
+                        string url = new Uri(new Uri(this.baseUrl), this.subdirectory).ToString();
+                        if (!url.EndsWith("/"))
+                            url = url + "/";
+                        url = url + sitemapfile.Filename;
+                        locTag.InnerText = url;
 
                         // for last modification date, have to find the latest urlEntry that need to be written
                         DateTime latest = sitemapfile.Entires.Where(w => w.Written == false)
@@ -323,7 +326,7 @@ namespace DotNetSiteMapGenerator
             {
                 var options = new ParallelOptions();
                 options.MaxDegreeOfParallelism = maximumThreads;
-                var uri = new Uri(new Uri(this.domain), workingPath);
+                var uri = new Uri(new Uri(this.baseUrl), workingPath);
                 var indexUrl = Uri.EscapeUriString(new Uri(uri, this.sitemapIndexFilename).ToString());
                 // escape IndexUrl
                 Parallel.ForEach(searchengines, options, async searchEngine =>
@@ -350,6 +353,10 @@ namespace DotNetSiteMapGenerator
             });
         }
 
+        /// <summary>
+        /// Remove a url from the sitemaps, will only re-write the sitemap that contains that url
+        /// </summary>
+        /// <param name="url"></param>
         public void RemoveUrl(string url)
         {
             foreach (var sitemapFile in sitemapsFiles)
