@@ -24,10 +24,12 @@ namespace DotNetSiteMapGenerator
         private int maximumThreads = 2;
         private int maximumAllowedEntries = 50000;
 
-        private string workingDirectory = "Sitemaps";
+        private string subdirectory = "Sitemaps";
+        private string workingPath;
 
         public SitemapGenerator()
         {
+            Build();
         }
 
         public SitemapGenerator WithFilename(string filename)
@@ -50,22 +52,24 @@ namespace DotNetSiteMapGenerator
 
         public SitemapGenerator WithOutputSubDirectory(string subDirectory)
         {
-            this.workingDirectory = subDirectory;
+            this.subdirectory = subDirectory;
             return this;
         }
 
         public SitemapGenerator Build()
         {
-            this.workingDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", workingDirectory);
-            if (!Directory.Exists(workingDirectory))
-                Directory.CreateDirectory(workingDirectory);
-            LoadCreatedSitemaps();
+            this.workingPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", subdirectory);
+            if (!Directory.Exists(workingPath))
+                Directory.CreateDirectory(workingPath);
+            // check if this class has been initiated without the builder pattern to prevent double loading of created sitemaps
+            if (sitemapsFiles.Count == 0)
+                LoadCreatedSitemaps();
             return this;
         }
 
         private void LoadCreatedSitemaps()
         {
-            var files = Directory.GetFiles(workingDirectory, "*.xml");
+            var files = Directory.GetFiles(workingPath, "*.xml");
 
             foreach (var file in files)
                 LoadUrlsFromFile(file);
@@ -193,7 +197,7 @@ namespace DotNetSiteMapGenerator
 
                      sitemapFile.NeedReWrite = false;
 
-                     document.Save(Path.Combine(workingDirectory, sitemapFile.Filename));
+                     document.Save(Path.Combine(workingPath, sitemapFile.Filename));
                  }
              });
         }
