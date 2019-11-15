@@ -2,10 +2,10 @@
 
 A .core library to generate sitemap for any site, it supports sitemap index with nested sitemaps, and sitemap categories.
 
-How to implement?
+### H2 How to implement?
 inside the Startup.cs you have two main options:
 
-Option 1: Zero configuration implementation
+### H3 Option 1: Zero configuration implementation
 ```c#
  public void ConfigureServices(IServiceCollection services)
         {
@@ -14,7 +14,7 @@ Option 1: Zero configuration implementation
             services.AddSingleton<ISitemapGenerator>(new SitemapGenerator("https://localhost:44399/"));
         }
 ```
-Option 2: With Customization
+### H3 Option 2: With Customization
 ```c#
   public void ConfigureServices(IServiceCollection services)
         {
@@ -31,7 +31,7 @@ Option 2: With Customization
         }
 ```
 
-How to add urls?
+### H3 How to add urls?
 
 ```c#
 public class HomeController : Controller
