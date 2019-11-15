@@ -17,7 +17,9 @@ namespace DotNetSiteMapGenerator
     {
         private List<SitemapFile> sitemapsFiles = new List<SitemapFile>();
         private const string signature = "Generated using DotNetSitemapGenerator *** https://github.com/DevAbsi/DotNetSiteMapGenerator ";
-        private const string googlePingUrl = "";
+        private const string googlePingUrl = "https://www.google.com/webmasters/tools/ping?sitemap=";
+        private const string bingPingUrl = "https://www.bing.com/ping?sitemap=";
+        private const string yandexPingUrl = "http://webmaster.yandex.com/site/map.xml?host=";
         private string domain = string.Empty;
         private string baseFilename = "sitemap";
         private string sitemapIndexFilename = "sitemap-index";
@@ -25,8 +27,13 @@ namespace DotNetSiteMapGenerator
         private int maximumAllowedEntries = 50000;
         private string subdirectory = "Sitemaps";
         private string workingPath;
+        private SearchEngines[] autoPingEngines;
 
-        public SitemapGenerator(string domainnameUrl)
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="baseUrl">Home Url</param>
+        public SitemapGenerator(string baseUrl)
         {
             Build();
         }
@@ -69,6 +76,12 @@ namespace DotNetSiteMapGenerator
         public SitemapGenerator WithDomainName(string domainnameUrl)
         {
             this.domain = domainnameUrl;
+            return this;
+        }
+
+        public SitemapGenerator WithAutoPing(params SearchEngines[] autoPingEngines)
+        {
+            this.autoPingEngines = autoPingEngines;
             return this;
         }
 
@@ -241,6 +254,9 @@ namespace DotNetSiteMapGenerator
                     document.Save(Path.Combine(workingPath, sitemapFile.Filename));
                 }
             });
+
+            if (this.autoPingEngines != null)
+                await PingSearchEngines(this.autoPingEngines);
         }
 
         private XmlDocument createDefaultXmlDocument()
@@ -268,16 +284,35 @@ namespace DotNetSiteMapGenerator
         /// <returns></returns>
         public async Task PingSearchEngines(params SearchEngines[] searchengines)
         {
-            foreach (var searchEngine in searchengines)
+            await Task.Run(() =>
             {
-                HttpClient client = new HttpClient();
-                switch (searchEngine)
+                var options = new ParallelOptions();
+                options.MaxDegreeOfParallelism = maximumThreads;
+                var uri = new Uri(new Uri(this.domain), workingPath);
+                var indexUrl = Uri.EscapeUriString(new Uri(uri, this.sitemapIndexFilename).ToString());
+                // escape IndexUrl
+                Parallel.ForEach(searchengines, options, async searchEngine =>
                 {
-                    case SearchEngines.Google:
-                        await client.GetAsync(googlePingUrl.Trim() + "sitemap.index");
-                        break;
-                }
-            }
+                    HttpClient client = new HttpClient();
+                    switch (searchEngine)
+                    {
+                        case SearchEngines.Google:
+                            await client.GetAsync(googlePingUrl.Trim() + indexUrl);
+                            Debug.WriteLine(Uri.EscapeUriString(indexUrl));
+                            break;
+
+                        case SearchEngines.Bing:
+                            await client.GetAsync(bingPingUrl.Trim() + indexUrl);
+                            Debug.WriteLine(Uri.EscapeUriString(indexUrl));
+                            break;
+
+                        case SearchEngines.Yandex:
+                            await client.GetAsync(yandexPingUrl.Trim() + indexUrl);
+                            Debug.WriteLine(Uri.EscapeUriString(indexUrl));
+                            break;
+                    }
+                });
+            });
         }
 
         public void RemoveUrl(string url)
