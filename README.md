@@ -10,7 +10,8 @@ Option 1: Zero configuration implementation
  public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddSingleton<ISitemapGenerator, SitemapGenerator>();
+                 // have to initilise it with baseUrl of website eg: site home URL
+            services.AddSingleton<ISitemapGenerator>(new SitemapGenerator("https://localhost:44399/"));
         }
 ```
 Option 2: With Customization
