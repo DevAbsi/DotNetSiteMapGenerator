@@ -3,16 +3,26 @@
 A .core library to generate sitemap for any site, it supports sitemap index with nested sitemaps, and sitemap categories.
 
 How to implement?
-inside the Startup.cs:
+inside the Startup.cs you have two main options:
+
+Option 1: Zero configuration implementation
 ```c#
  public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddSingleton<ISitemapGenerator>(
-                new SitemapGenerator().WithFilename("sitemap")
-                .WithMaximumAllowedEntries(50000)
-                .WithMaximumThreads(2)
-                .Build());
+            services.AddSingleton<ISitemapGenerator, SitemapGenerator>();
+        }
+```
+Option 2: With Customization
+```c#
+ public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddControllersWithViews();
+            services.AddSingleton<ISitemapGenerator>(new SitemapGenerator()
+                        .WithFilename("sitemap")
+                        .WithOutputSubDirectory("Sitemaps")
+                        .WithMaximumAllowedEntries(50000)
+                        .WithMaximumThreads(2));
         }
 ```
 
