@@ -14,7 +14,7 @@ inside the Startup.cs you have two main options:
             services.AddSingleton<ISitemapGenerator>(new SitemapGenerator("https://localhost:44399/"));
         }
 ```
-### H3 Option 2: With Customization
+### H3Option 2: With Customization
 ```c#
   public void ConfigureServices(IServiceCollection services)
         {
