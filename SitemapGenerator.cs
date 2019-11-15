@@ -15,17 +15,22 @@ namespace DotNetSiteMapGenerator
     /// </summary>
     public class SitemapGenerator : ISitemapGenerator
     {
-        private List<UrlEntry> entriesPool = new List<UrlEntry>();
         private List<SitemapFile> sitemapsFiles = new List<SitemapFile>();
-        private const string signature = "Generated using DotNetSitemapGenerator *** http://github.com/DevAbsi/ ";
+        private const string signature = "Generated using DotNetSitemapGenerator *** https://github.com/DevAbsi/DotNetSiteMapGenerator ";
         private const string googlePingUrl = "";
-
+        private string domain = string.Empty;
         private string baseFilename = "sitemap";
+        private string sitemapIndexFilename = "sitemap-index";
         private int maximumThreads = 2;
         private int maximumAllowedEntries = 50000;
 
         private string subdirectory = "Sitemaps";
         private string workingPath;
+
+        public SitemapGenerator(string domainnameUrl)
+        {
+            Build();
+        }
 
         public SitemapGenerator()
         {
@@ -35,6 +40,12 @@ namespace DotNetSiteMapGenerator
         public SitemapGenerator WithFilename(string filename)
         {
             this.baseFilename = filename;
+            return this;
+        }
+
+        public SitemapGenerator WithSitemapIndex(string sitemapIndexFileName)
+        {
+            this.sitemapIndexFilename = sitemapIndexFileName;
             return this;
         }
 
@@ -56,6 +67,12 @@ namespace DotNetSiteMapGenerator
             return this;
         }
 
+        public SitemapGenerator WithDomainName(string domainnameUrl)
+        {
+            this.domain = domainnameUrl;
+            return this;
+        }
+
         public SitemapGenerator Build()
         {
             this.workingPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", subdirectory);
@@ -69,7 +86,7 @@ namespace DotNetSiteMapGenerator
 
         private void LoadCreatedSitemaps()
         {
-            var files = Directory.GetFiles(workingPath, "*.xml");
+            var files = Directory.GetFiles(workingPath, this.baseFilename + FilenameSeparators.BlockSeparator + "*.xml");
 
             foreach (var file in files)
                 LoadUrlsFromFile(file);
@@ -163,43 +180,73 @@ namespace DotNetSiteMapGenerator
 
         public async Task Save()
         {
-            // TODO create a new sitemap index that will containes all the sitemaps generated
-
+            // TODO create a new sitemap index that will containes all the sitemaps generated in case that a new sitemap file has been changed
             await Task.Run(() =>
-             {
-                 foreach (var sitemapFile in sitemapsFiles.Where(w => w.NeedReWrite == true))
-                 {
-                     XmlDocument document = new XmlDocument();
-                     var declaration = document.CreateXmlDeclaration("1.0", "UTF-8", null);
-                     var comment = document.CreateComment(signature);
-                     document.AppendChild(declaration);
-                     document.AppendChild(comment);
-                     var root = document.CreateElement("urlset");
-                     document.AppendChild(root);
-                     ParallelOptions options = new ParallelOptions()
-                     {
-                         MaxDegreeOfParallelism = maximumThreads
-                     };
-                     Parallel.ForEach(sitemapFile.Entires, options, urlEntry =>
-                     {
-                         XmlElement urlTag = document.CreateElement("url");
-                         var loc = document.CreateElement("loc");
-                         loc.InnerText = urlEntry.URL;
-                         var lastmod = document.CreateElement("lastmod");
-                         lastmod.InnerText = urlEntry.LastModification.ToString();
-                         var changeFrequency = document.CreateElement("changefreq");
-                         changeFrequency.InnerText = Enum.GetName(typeof(ChangeFrequency), urlEntry.ChangeFrequency).ToString();
-                         urlTag.AppendChild(loc);
-                         urlTag.AppendChild(lastmod);
-                         urlTag.AppendChild(changeFrequency);
-                         root.AppendChild(urlTag);
-                     });
+            {
+                if (sitemapsFiles.Any(w => w.NeedReWrite == true))
+                {
+                    XmlDocument document = createDefaultXmlDocument();
+                    var root = document.CreateElement("sitemapindex");
 
-                     sitemapFile.NeedReWrite = false;
+                    foreach (var sitemapfile in sitemapsFiles)
+                    {
+                        // create all the needed tags
+                        var sitemapTag = document.CreateElement("sitemap");
+                        var locTag = document.CreateElement("loc");
+                        var lastModificationTag = document.CreateElement("lastmod");
+                        locTag.InnerText = Path.Combine(domain, subdirectory, sitemapfile.Filename);
+                        // for last modification date, have to find the latest urlEntry that need to be written
+                        DateTime latest = sitemapfile.Entires.Where(w => w.Written == false)
+                            .OrderByDescending(w => w.LastModification)
+                            .First().LastModification;
+                        lastModificationTag.InnerText = latest.ToString();
+                        sitemapTag.AppendChild(locTag);
+                        sitemapTag.AppendChild(lastModificationTag);
+                        root.AppendChild(sitemapTag);
+                    }
+                    document.AppendChild(root);
+                    document.Save(Path.Combine(workingPath, $"{this.sitemapIndexFilename}.xml"));
+                }
 
-                     document.Save(Path.Combine(workingPath, sitemapFile.Filename));
-                 }
-             });
+                foreach (var sitemapFile in sitemapsFiles.Where(w => w.NeedReWrite == true))
+                {
+                    XmlDocument document = createDefaultXmlDocument();
+                    var root = document.CreateElement("urlset");
+                    document.AppendChild(root);
+                    ParallelOptions options = new ParallelOptions()
+                    {
+                        MaxDegreeOfParallelism = maximumThreads
+                    };
+                    Parallel.ForEach(sitemapFile.Entires, options, urlEntry =>
+                    {
+                        XmlElement urlTag = document.CreateElement("url");
+                        var loc = document.CreateElement("loc");
+                        loc.InnerText = urlEntry.URL;
+                        var lastmod = document.CreateElement("lastmod");
+                        lastmod.InnerText = urlEntry.LastModification.ToString();
+                        var changeFrequency = document.CreateElement("changefreq");
+                        changeFrequency.InnerText = Enum.GetName(typeof(ChangeFrequency), urlEntry.ChangeFrequency).ToString();
+                        urlTag.AppendChild(loc);
+                        urlTag.AppendChild(lastmod);
+                        urlTag.AppendChild(changeFrequency);
+                        root.AppendChild(urlTag);
+                    });
+
+                    sitemapFile.NeedReWrite = false;
+
+                    document.Save(Path.Combine(workingPath, sitemapFile.Filename));
+                }
+            });
+        }
+
+        private XmlDocument createDefaultXmlDocument()
+        {
+            XmlDocument document = new XmlDocument();
+            var declaration = document.CreateXmlDeclaration("1.0", "UTF-8", null);
+            var comment = document.CreateComment(signature);
+            document.AppendChild(declaration);
+            document.AppendChild(comment);
+            return document;
         }
 
         private string GenerateFilename(string category, int sitemapNumber)
