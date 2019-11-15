@@ -15,14 +15,18 @@ Option 1: Zero configuration implementation
 ```
 Option 2: With Customization
 ```c#
- public void ConfigureServices(IServiceCollection services)
+  public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            //services.AddSingleton<ISitemapGenerator, SitemapGenerator>();
             services.AddSingleton<ISitemapGenerator>(new SitemapGenerator()
+                        .WithDomainName("https://localhost:44399")
                         .WithFilename("sitemap")
                         .WithOutputSubDirectory("Sitemaps")
+                        .WithSitemapIndex("sitemap-index")
                         .WithMaximumAllowedEntries(50000)
-                        .WithMaximumThreads(2));
+                        .WithMaximumThreads(2)
+                        .WithAutoPing(SearchEngines.Google, SearchEngines.Bing, SearchEngines.Yandex));
         }
 ```
 
