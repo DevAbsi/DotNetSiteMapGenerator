@@ -24,7 +24,7 @@ namespace DotNetSiteMapGenerator
         private int maximumThreads = 2;
         private int maximumAllowedEntries = 50000;
 
-        private string workingDirectory;
+        private string workingDirectory = "Sitemaps";
 
         public SitemapGenerator()
         {
@@ -48,9 +48,15 @@ namespace DotNetSiteMapGenerator
             return this;
         }
 
+        public SitemapGenerator WithOutputSubDirectory(string subDirectory)
+        {
+            this.workingDirectory = subDirectory;
+            return this;
+        }
+
         public SitemapGenerator Build()
         {
-            workingDirectory = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\Sitemaps");
+            this.workingDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", workingDirectory);
             if (!Directory.Exists(workingDirectory))
                 Directory.CreateDirectory(workingDirectory);
             LoadCreatedSitemaps();
