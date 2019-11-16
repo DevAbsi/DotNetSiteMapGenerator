@@ -331,23 +331,25 @@ namespace DotNetSiteMapGenerator
                 // escape IndexUrl
                 Parallel.ForEach(searchengines, options, async searchEngine =>
                 {
-                    HttpClient client = new HttpClient();
-                    switch (searchEngine)
+                    using (HttpClient client = new HttpClient())
                     {
-                        case SearchEngines.Google:
-                            await client.GetAsync(googlePingUrl.Trim() + indexUrl);
-                            Debug.WriteLine(Uri.EscapeUriString(indexUrl));
-                            break;
+                        switch (searchEngine)
+                        {
+                            case SearchEngines.Google:
+                                await client.GetAsync(googlePingUrl.Trim() + indexUrl);
+                                Debug.WriteLine(Uri.EscapeUriString(indexUrl));
+                                break;
 
-                        case SearchEngines.Bing:
-                            await client.GetAsync(bingPingUrl.Trim() + indexUrl);
-                            Debug.WriteLine(Uri.EscapeUriString(indexUrl));
-                            break;
+                            case SearchEngines.Bing:
+                                await client.GetAsync(bingPingUrl.Trim() + indexUrl);
+                                Debug.WriteLine(Uri.EscapeUriString(indexUrl));
+                                break;
 
-                        case SearchEngines.Yandex:
-                            await client.GetAsync(yandexPingUrl.Trim() + indexUrl);
-                            Debug.WriteLine(Uri.EscapeUriString(indexUrl));
-                            break;
+                            case SearchEngines.Yandex:
+                                await client.GetAsync(yandexPingUrl.Trim() + indexUrl);
+                                Debug.WriteLine(Uri.EscapeUriString(indexUrl));
+                                break;
+                        }
                     }
                 });
             });
