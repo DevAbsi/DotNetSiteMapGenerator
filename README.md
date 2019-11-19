@@ -1,6 +1,7 @@
 # DotNetSiteMapGenerator
 
 A .core library to generate sitemap for any site, it supports sitemap index with nested sitemaps, and sitemap categories.
+The library containes a functionality to auto-ping search engines to notify them about new changes in sitemap once a you add a new url to your sitemap. if you want to manually ping certain sitemaps just call the Ping() method.
 
 ## How to implement?
 inside the Startup.cs you have two main options:
