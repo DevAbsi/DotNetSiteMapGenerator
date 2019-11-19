@@ -45,10 +45,10 @@ public class HomeController : Controller
 
         public async Task<IActionResult> Index()
         {
-            sitemapGenerator.AddUrlEntry(
-                "http://domain.com/ ",
+             sitemapGenerator.AddUrlEntry(
+                "blog/post/1",
                 "Blog",
-                ChangeFrequency.Hourly,
+                ChangeFrequency.Monthly,
                 DateTime.Now);
             await sitemapGenerator.Save();
             return View();
